@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Purpose: CI pipeline — the plug-in test suite on push events.
+# Design.: Woodpecker server+agent run as containers on ghostell
+#          (docker backend), same as the platform. The image is the
+#          platform's devcontainer image (deb-obs-devcontainer:ci).
+#          The platform is a dependency and is installed as one
+#          (pip install), never cloned.
+#
+# INACTIVE — BLOCKED on the platform publishing an installable
+# wheel (index or CI artifact). Until it exists, `pip install
+# debian-observer` cannot resolve and this pipeline cannot run.
+# Un-comment the steps the day the platform wheel is published;
+# the plug-in's pyproject already pins the version range.
+#
+# Authors: Igor Zubiaurre <igor@zubiaurre.es>
+#-----------------------------------------------------------------------------
+
+# steps:
+#   - name: test
+#     image: deb-obs-devcontainer:ci
+#     commands:
+#       - pip install --user -q debian-observer
+#       - pip install --user -q -e ".[dev]"
+#       - pytest tests/ -q

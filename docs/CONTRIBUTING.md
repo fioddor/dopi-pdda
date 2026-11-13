@@ -26,8 +26,15 @@ modified one). With the platform images present:
 git clone https://ghostell.local/gitea/fioddor-dev/dopi-pdda.git
 cd dopi-pdda
 # open the .devcontainer in your container tooling, or:
-docker run --rm -it -v $PWD:/workspace deb-obs-devcontainer:latest
-```
+docker build -f .devcontainer/Dockerfile -t dopi-pdda-devcontainer:latest .
+docker run --detach --name dopi-pdda-dev               \
+           --volume $PWD:/workspace                    \
+           --volume <path-to-shared-data-folder>:/data \
+           dopi-pdda-devcontainer:latest
+ 
+docker exec -ti dopi-pdda-dev bash      # develop inside the container
+                                        # ...
+exit                                    # exit the container when development is done
 
 Inside the container:
 
@@ -36,3 +43,22 @@ pip install --user debian_observer   # the platform, as a library
 pip install --user -e '.[dev]'       # the plug-in, editable
 pytest tests/ -q                     # the battery
 ```
+
+## Docker image hygiene
+
+Manual devcontainer builds (docker build / devcontainer up --build)
+re-tag the same name on every iteration and leave the previous run
+dangling (<none> in docker images). The CI pipelines prune their own
+dangling images at teardown, but manual sessions do not.
+
+After a manual build session on a shared host, prune the dangling
+images you left behind:
+
+```shell
+docker image prune -f   # removes ONLY untagged (<none>) images
+```
+
+Every manual rebuild leaks ~2.5 GB to the shared daemon otherwise
+(the devcontainer image is the fat one). Check the accumulation
+with docker system df and keep it flat.
+

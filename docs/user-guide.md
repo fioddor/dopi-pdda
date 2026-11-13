@@ -32,6 +32,28 @@ prefix (they are the application's commands, not the platform's):
 
 Install, smoke tests, ...
 
+## The Development Container
+
+The plug-in develops against an installed platform. The devcontainer
+image builds on the platform's own devcontainer image, and the platform
+wheel travels in the build context (no index server, no clone).
+
+Build the image (the platform wheel beside the Dockerfile):
+
+```shell
+python3 -m build --wheel /path/to/debian-observer   # or download the wheel
+cp /path/to/debian-observer/dist/debian_observer-*-py3-none-any.whl .devcontainer/
+docker build -t dopi-pdda-dev -f .devcontainer/Dockerfile .devcontainer/
+```
+
+Run the container and the battery inside:
+
+```shell
+docker run --rm -it -v $PWD:/workspace dopi-pdda-dev
+# inside:
+cd /workspace && pip install --user -e '.[dev]' && pytest tests/ -q
+```
+
 ## The Data Flow
 
 As previously stated, DOPI-PDDA is a plug-in for the Debian Observer platform.

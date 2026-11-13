@@ -18,4 +18,21 @@ The contribution rules for the plug-in are the same from Debian Observer.
 It is a good practice to separate the development environments from
 each other and from your system.
 
-...
+The plug-in's devcontainer builds on the platform's images (the
+plug-in develops against an installed platform, never against a
+modified one). With the platform images present:
+
+```shell
+git clone https://ghostell.local/gitea/fioddor-dev/dopi-pdda.git
+cd dopi-pdda
+# open the .devcontainer in your container tooling, or:
+docker run --rm -it -v $PWD:/workspace deb-obs-devcontainer:latest
+```
+
+Inside the container:
+
+```shell
+pip install --user debian_observer   # the platform, as a library
+pip install --user -e '.[dev]'       # the plug-in, editable
+pytest tests/ -q                     # the battery
+```

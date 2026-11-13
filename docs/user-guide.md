@@ -5,6 +5,28 @@ Quick start and operational guide for DOPI-PDDA
 
 ## Installation
 
+DOPI-PDDA is a plug-in: the Debian Observer platform is a
+prerequisite. Install the platform wheel first, then the plug-in.
+
+```shell
+pipx install debian_observer-0.1.0-py3-none-any.whl   # the platform
+pipx install dopi_pdda-0.1.0-py3-none-any.whl          # the plug-in
+```
+
+Or, inside one virtual environment:
+
+```shell
+pip install debian_observer-0.1.0-py3-none-any.whl
+pip install dopi_pdda-0.1.0-py3-none-any.whl
+```
+
+The plug-in installs two console scripts, without the platform's
+prefix (they are the application's commands, not the platform's):
+
+- `packages-deploy-deps-net-direct` — the dependency network table,
+  one row per clause, indexed by depender.
+- `packages-deploy-deps-net-reverse` — the same table reindexed by
+  target, for the "who depends on this package?" questions.
 
 ## Quick Start
 

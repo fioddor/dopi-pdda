@@ -15,16 +15,27 @@ The contribution rules for the plug-in are the same from Debian Observer.
 
 ## Set Up a Development Environment
 
-It is a good practice to separate the development environments from
-each other and from your system.
+It is a good practice to separate the development environments from each other
+and from your system.
 
-The plug-in's devcontainer builds on the platform's images (the
-plug-in develops against an installed platform, never against a
-modified one). With the platform images present:
+The plug-in's devcontainer builds on the platform's images (the plug-in
+develops against an installed platform, never against a modified one).
+
+The devcontainer's build context — `.devcontainer/devcontainer.json` declares
+`"context": ".."`, so place the platform wheel in the repository root before
+building the devcontainer image.
+
+Pip requires the wheel-name convention, and the Dockerfile installs it by glob
+(never renamed). Thus, the wheel must keep its own filename in the build
+context.
+
+With the platform images present:
 
 ```shell
 git clone https://ghostell.local/gitea/fioddor-dev/dopi-pdda.git
 cd dopi-pdda
+cp <path-to>/debian_observer-*-py3-none-any.whl .
+
 # open the .devcontainer in your container tooling, or:
 docker build -f .devcontainer/Dockerfile -t dopi-pdda-devcontainer:latest .
 docker run --detach --name dopi-pdda-dev               \
@@ -36,12 +47,7 @@ docker exec -ti dopi-pdda-dev bash      # develop inside the container
                                         # ...
 exit                                    # exit the container when development is done
 
-Inside the container:
-
-```shell
-pip install --user debian_observer   # the platform, as a library
-pip install --user -e '.[dev]'       # the plug-in, editable
-pytest tests/ -q                     # the battery
+rm debian_observer-*-py3-none-any.whl   # it does not belong to the repository
 ```
 
 ## Docker image hygiene
